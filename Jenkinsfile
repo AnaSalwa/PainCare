@@ -1,0 +1,39 @@
+pipeline {
+    agent any 
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git 'https://github.com/AnaSalwa/PainCare.git'
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    docker.build('anasalwa/paincare_image_builder:v1.2')
+                }
+            }
+        }
+        stage('Push to Docker Hub') {
+            steps {
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials-id') {
+                        sh 'docker push anasalwa/paincare_image_builder:v1.2'
+                    }
+                }
+            }
+        }
+        stage('Deploy') {
+            steps {
+                script {
+                    // Arrêter et supprimer l'ancien conteneur
+                    sh 'docker stop adoring_nobel || true'
+                    sh 'docker rm adoring_nobel || true'
+
+                    // Démarrer un nouveau conteneur avec l'image mise à jour
+                    sh 'docker run -d --name adoring_nobel -p 8080:8080 anasalwa/paincare_image_builder:v1.2'
+                }
+            }
+        }
+    }
+}
