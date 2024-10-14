@@ -26,7 +26,7 @@ pipeline {
                 }
             }
         }
-        stage('Deploy') {
+        stage('Deployement') {
             steps {
                 script {
                     // Arrêter et supprimer l'ancien conteneur
