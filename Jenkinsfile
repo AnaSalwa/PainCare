@@ -10,6 +10,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
+                    // Construction de l'image Docker
                     docker.build('anasalwa/paincare_image_builder:v1.2')
                 }
             }
@@ -17,7 +18,9 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 script {
+                    // Connexion à Docker Hub avec les identifiants
                     docker.withRegistry('https://index.docker.io/v1/', 'dockerhubCredentialsId') {
+                        // Pousser l'image vers Docker Hub
                         sh 'docker push anasalwa/paincare_image_builder:v1.2'
                     }
                 }
